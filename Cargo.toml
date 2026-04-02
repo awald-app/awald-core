@@ -1,0 +1,57 @@
+[workspace]
+members  = ["crates/awald-data", "crates/awald-engine", "crates/awald-session"]
+resolver = "2"
+
+[workspace.package]
+version      = "0.1.0"
+edition      = "2021"
+rust-version = "1.82"
+authors      = ["Awald contributors"]
+license      = "MIT"
+repository   = "https://github.com/awald-app/awald-core"
+homepage     = "https://awald.app"
+
+[workspace.dependencies]
+# Data
+polars        = { version = "1", features = ["csv", "parquet", "ipc", "lazy", "dtype-full"] }
+
+# Python bridge
+pyo3          = { version = "0.24", features = ["auto-initialize"] }
+
+# Async runtime
+tokio         = { version = "1", features = ["full"] }
+
+# Serialisation
+serde         = { version = "1", features = ["derive"] }
+serde_json    = "1"
+
+# Error handling
+thiserror     = "2"
+anyhow        = "1"
+
+# Concurrency
+parking_lot   = "0.12"
+
+# Logging
+tracing       = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+
+# Testing
+insta         = "1"          # snapshot testing
+tempfile      = "3"
+
+# Benchmarking
+criterion     = { version = "0.5", features = ["html_reports"] }
+
+[[bench]]
+name    = "slice_bench"
+harness = false
+
+[profile.release]
+opt-level     = 3
+lto           = "thin"
+codegen-units = 1
+
+[profile.bench]
+opt-level = 3
+lto       = "thin"

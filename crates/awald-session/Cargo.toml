@@ -1,0 +1,25 @@
+[package]
+name        = "awald-session"
+description = "Session orchestration for Awald — coordinates data store and Python executor"
+keywords    = ["session", "econometrics", "statistics"]
+categories  = ["science"]
+
+version.workspace      = true
+edition.workspace      = true
+rust-version.workspace = true
+authors.workspace      = true
+license.workspace      = true
+repository.workspace   = true
+homepage.workspace     = true
+
+[dependencies]
+awald-data   = { path = "../awald-data" }
+awald-engine = { path = "../awald-engine" }
+tokio        = { workspace = true }
+serde        = { workspace = true }
+serde_json   = { workspace = true }
+thiserror    = { workspace = true }
+tracing      = { workspace = true }
+
+[dev-dependencies]
+tokio = { workspace = true, features = ["test-util"] }

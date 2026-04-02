@@ -1,0 +1,19 @@
+[project]
+name            = "awald-core-testenv"
+version         = "0.0.1"
+description     = "Python test environment for awald-core integration tests"
+requires-python = ">=3.12"
+
+dependencies = [
+    "pyfixest>=0.30",
+    "polars>=1.0",
+    "statsmodels>=0.14",
+    "pandas>=2.1",
+    "numpy>=1.26",
+]
+
+[tool.uv]
+dev-dependencies = [
+    "pytest>=8.0",
+    "ruff>=0.4",
+]

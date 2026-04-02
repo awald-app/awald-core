@@ -1,0 +1,25 @@
+[package]
+name        = "awald-engine"
+description = "pyo3 Python executor with serialised GIL and linear execution for Awald"
+keywords    = ["python", "pyo3", "executor", "econometrics"]
+categories  = ["science", "api-bindings"]
+
+version.workspace      = true
+edition.workspace      = true
+rust-version.workspace = true
+authors.workspace      = true
+license.workspace      = true
+repository.workspace   = true
+homepage.workspace     = true
+
+[dependencies]
+pyo3        = { workspace = true }
+tokio       = { workspace = true }
+serde       = { workspace = true }
+serde_json  = { workspace = true }
+thiserror   = { workspace = true }
+tracing     = { workspace = true }
+parking_lot = { workspace = true }
+
+[dev-dependencies]
+tokio       = { workspace = true, features = ["test-util"] }
