@@ -8,26 +8,26 @@ use crate::Result;
 
 /// A single user session: one loaded dataset + one Python executor.
 pub struct Session {
-    pub store:    Option<DataStore>,
+    pub store: Option<DataStore>,
     pub executor: Executor,
     /// Maps Python variable names → DataStore handles for frames
     /// created or loaded during this session.
-    pub frames:   HashMap<String, DataStore>,
+    pub frames: HashMap<String, DataStore>,
 }
 
 impl Session {
     pub fn new() -> Result<Self> {
         Ok(Self {
-            store:    None,
+            store: None,
             executor: Executor::new()?,
-            frames:   HashMap::new(),
+            frames: HashMap::new(),
         })
     }
 
     /// Load a dataset and make it available as `df` in the Python namespace.
     pub async fn load(&mut self, path: impl AsRef<Path>) -> Result<DatasetMeta> {
         let store = DataStore::load(path).await?;
-        let meta  = store.meta();
+        let meta = store.meta();
         self.store = Some(store);
         // TODO: inject polars DataFrame into Python namespace via pyo3
         Ok(meta)

@@ -94,6 +94,13 @@ For security-related questions:
 - **Security Team**: security@awald.app
 - **General Issues**: Use GitHub issues (non-security matters only)
 
+## See Also
+
+- [CONTRIBUTING.md](docs/CONTRIBUTING.md) - Contribution guide
+- [PRE_COMMIT.md](docs/PRE_COMMIT.md) - Code quality setup
+- [TODO.md](docs/TODO.md) - Development roadmap
+- [README.md](README.md) - Project overview
+
 ## Related Documentation
 
 - [SECURITY.md](./SECURITY.md) - This security policy

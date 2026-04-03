@@ -144,6 +144,13 @@ Current: **`0.0.1` — pre-alpha, unstable API.**
 
 ---
 
+## See Also
+
+- [CONTRIBUTING.md](docs/CONTRIBUTING.md) - Contribution guide
+- [PRE_COMMIT.md](docs/PRE_COMMIT.md) - Code quality setup
+- [TODO.md](docs/TODO.md) - Development roadmap
+- [SECURITY.md](SECURITY.md) - Security policy
+
 ## License
 
 MIT — see [LICENSE](LICENSE).

@@ -3,10 +3,10 @@
 //! Provides statistical summaries for DataFrame columns,
 //! with different representations for numeric vs categorical data.
 
-use serde::{Deserialize, Serialize};
-use polars::prelude::*;
 use polars::datatypes::DataType;
+use polars::prelude::*;
 use polars::series::Series;
+use serde::{Deserialize, Serialize};
 
 /// Summary statistics for a single variable/column
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -58,7 +58,11 @@ pub fn compute_summary(frame: &DataFrame, col_name: &str) -> Result<VarSummary, 
             Err(e) => {
                 // If computation fails (e.g., all-null column), log and return None
                 // rather than failing the entire summary
-                tracing::warn!("Failed to compute numeric stats for column {}: {}", col_name, e);
+                tracing::warn!(
+                    "Failed to compute numeric stats for column {}: {}",
+                    col_name,
+                    e
+                );
                 None
             }
         }
@@ -71,7 +75,11 @@ pub fn compute_summary(frame: &DataFrame, col_name: &str) -> Result<VarSummary, 
         match compute_categorical_stats(series.as_materialized_series()) {
             Ok(stats) => Some(stats),
             Err(e) => {
-                tracing::warn!("Failed to compute categorical stats for column {}: {}", col_name, e);
+                tracing::warn!(
+                    "Failed to compute categorical stats for column {}: {}",
+                    col_name,
+                    e
+                );
                 None
             }
         }
@@ -114,15 +122,19 @@ fn is_categorical_type(dtype: &DataType) -> bool {
 /// Compute numeric statistics
 fn compute_numeric_stats(series: &Series) -> Result<NumericStats, crate::Error> {
     let series = series.cast(&DataType::Float64)?;
-    
+
     let min = series.min::<f64>()?;
     let max = series.max::<f64>()?;
     let mean = series.mean();
-    let std = series.std(1).ok_or_else(|| crate::Error::Compute("Cannot compute std".to_string()))?;
-    
+    let std = series
+        .std(1)
+        .ok_or_else(|| crate::Error::Compute("Cannot compute std".to_string()))?;
+
     // Compute actual quantiles using median as fallback for now
     // TODO: Implement proper quantile computation with different interpolation methods
-    let median = series.median().ok_or_else(|| crate::Error::Compute("Cannot compute median".to_string()))?;
+    let median = series
+        .median()
+        .ok_or_else(|| crate::Error::Compute("Cannot compute median".to_string()))?;
 
     Ok(NumericStats {
         min: min.unwrap_or(0.0),
@@ -137,8 +149,9 @@ fn compute_numeric_stats(series: &Series) -> Result<NumericStats, crate::Error> 
 
 /// Compute categorical statistics
 fn compute_categorical_stats(series: &Series) -> Result<CategoricalStats, crate::Error> {
-    let mut value_counts: std::collections::HashMap<String, usize> = std::collections::HashMap::new();
-    
+    let mut value_counts: std::collections::HashMap<String, usize> =
+        std::collections::HashMap::new();
+
     match series.dtype() {
         DataType::String => {
             let string_series = series.str()?;
@@ -164,11 +177,11 @@ fn compute_categorical_stats(series: &Series) -> Result<CategoricalStats, crate:
             return Ok(CategoricalStats { top_values: vec![] });
         }
     }
-    
+
     let mut top_values: Vec<(String, usize)> = value_counts.into_iter().collect();
     top_values.sort_by(|a, b| b.1.cmp(&a.1)); // Sort by count descending
     top_values.truncate(10); // Keep top 10
-    
+
     Ok(CategoricalStats { top_values })
 }
 
@@ -182,14 +195,14 @@ mod tests {
     fn test_numeric_summary() {
         let s = Series::new("test".into(), [1.0, 2.0, 3.0, 4.0, 5.0]);
         let df = DataFrame::new(5, vec![s.into()]).unwrap();
-        
+
         let summary = compute_summary(&df, "test").unwrap();
         assert_eq!(summary.name, "test");
         assert_eq!(summary.nrows, 5);
         assert_eq!(summary.null_count, 0);
         assert!(summary.numeric.is_some());
         assert!(summary.categorical.is_none());
-        
+
         let numeric = summary.numeric.unwrap();
         assert_eq!(numeric.min, 1.0);
         assert_eq!(numeric.max, 5.0);
@@ -200,19 +213,20 @@ mod tests {
     fn test_categorical_summary() {
         let s = Series::new("test".into(), ["a", "b", "a", "c", "a"]);
         let df = DataFrame::new(5, vec![s.into()]).unwrap();
-        
+
         let summary = compute_summary(&df, "test").unwrap();
         assert_eq!(summary.name, "test");
         assert_eq!(summary.nrows, 5);
         assert_eq!(summary.null_count, 0);
         assert!(summary.numeric.is_none());
         assert!(summary.categorical.is_some());
-        
+
         let categorical = summary.categorical.unwrap();
         assert_eq!(categorical.top_values.len(), 3);
-        
+
         // Check that we have the expected values regardless of order
-        let counts: std::collections::HashMap<String, usize> = categorical.top_values.into_iter().collect();
+        let counts: std::collections::HashMap<String, usize> =
+            categorical.top_values.into_iter().collect();
         assert_eq!(counts.get("a"), Some(&3));
         assert_eq!(counts.get("b"), Some(&1));
         assert_eq!(counts.get("c"), Some(&1));
@@ -222,7 +236,7 @@ mod tests {
     fn test_all_null_column() {
         let s = Series::new("test".into(), [Some(1), None, Some(3), None, None]);
         let df = DataFrame::new(5, vec![s.into()]).unwrap();
-        
+
         let summary = compute_summary(&df, "test").unwrap();
         assert_eq!(summary.null_count, 3);
         assert_eq!(summary.nrows, 5);

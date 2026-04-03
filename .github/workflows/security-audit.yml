@@ -9,21 +9,21 @@ on:
 jobs:
   security-audit:
     runs-on: ubuntu-latest
-    
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-        
+
       - name: Install Rust
         uses: dtolnay/rust-toolchain@stable
         with:
           components: rustfmt, clippy
-          
+
       - name: Run cargo audit
         run: |
           cargo install cargo-audit
           cargo audit
-          
+
       - name: Check for security advisories
         run: |
           # Exit with error if any vulnerabilities found
@@ -34,7 +34,7 @@ jobs:
             cargo install cargo-audit
             cargo audit --deny warnings
           fi
-          
+
       - name: Run cargo-deny (if present)
         run: |
           if [ -f "Cargo.toml" ]; then

@@ -9,7 +9,7 @@ use crate::Result;
 
 /// Returns (stdout_capture, stderr_capture) StringIO objects.
 pub fn install(py: Python<'_>) -> Result<(Py<PyAny>, Py<PyAny>)> {
-    let io  = py.import("io")?;
+    let io = py.import("io")?;
     let sys = py.import("sys")?;
 
     let out = io.call_method0("StringIO")?;
@@ -23,7 +23,7 @@ pub fn install(py: Python<'_>) -> Result<(Py<PyAny>, Py<PyAny>)> {
 
 /// Drain a StringIO capture buffer, returning its contents as a String.
 pub fn drain(cap: &Py<PyAny>, py: Python<'_>) -> Result<String> {
-    let bound  = cap.bind(py);
+    let bound = cap.bind(py);
     let s: String = bound.call_method0("getvalue")?.extract()?;
     Ok(s)
 }

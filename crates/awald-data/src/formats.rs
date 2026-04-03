@@ -16,10 +16,10 @@ pub async fn read(path: &Path) -> Result<DataFrame> {
         let path = path.to_path_buf();
         move || match ext.as_str() {
             "csv" | "tsv" | "txt" => read_csv(&path),
-            "parquet"             => read_parquet(&path),
-            "dta"                 => read_stata(&path),
-            "xlsx" | "xls"        => read_excel(&path),
-            "ipc" | "arrow"       => read_ipc(&path),
+            "parquet" => read_parquet(&path),
+            "dta" => read_stata(&path),
+            "xlsx" | "xls" => read_excel(&path),
+            "ipc" | "arrow" => read_ipc(&path),
             other => Err(Error::UnsupportedFormat(other.to_string())),
         }
     })
@@ -43,17 +43,19 @@ fn read_parquet(path: &Path) -> Result<DataFrame> {
 fn read_stata(path: &Path) -> Result<DataFrame> {
     // Stata support requires additional features or different API
     // Placeholder implementation
-    Err(Error::UnsupportedFormat(
-        format!("Stata support pending: {}", path.display())
-    ))
+    Err(Error::UnsupportedFormat(format!(
+        "Stata support pending: {}",
+        path.display()
+    )))
 }
 
 fn read_excel(path: &Path) -> Result<DataFrame> {
     // Requires polars "xlsx2csv" feature or calamine
     // Placeholder — implementation tracked in TODO
-    Err(Error::UnsupportedFormat(
-        format!("Excel support pending: {}", path.display())
-    ))
+    Err(Error::UnsupportedFormat(format!(
+        "Excel support pending: {}",
+        path.display()
+    )))
 }
 
 fn read_ipc(path: &Path) -> Result<DataFrame> {

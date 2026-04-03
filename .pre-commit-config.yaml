@@ -1,0 +1,132 @@
+# Pre-commit Hooks Configuration
+# This mirrors the CI checks in .github/workflows/ci.yml
+
+# Exclude patterns (files that should not be checked)
+exclude: |
+  (?x)^(
+    .*\.lock$|
+    .*\.key$|
+    .*\.pem$|
+    .*\.crt$|
+    target/.*|
+    \.git/.*|
+    \.secrets\.baseline|
+    .*\.bak$|
+    .*\.tmp$|
+    .*\.swp$|
+    .*\.swo$|
+    \.DS_Store|
+    Thumbs\.db
+  )$
+
+# Default language version
+default_language_version:
+  python: python3
+
+# Minimum pre-commit version
+minimum_pre_commit_version: 2.20.0
+
+# CI configuration
+ci:
+  autofix_commit_msg: |
+    [pre-commit.ci] auto fixes from pre-commit.com hooks
+
+    for more information, see https://pre-commit.ci
+  autofix_prs: true
+  autoupdate_branch: ''
+  autoupdate_commit_msg: '[pre-commit.ci] pre-commit autoupdate'
+  autoupdate_schedule: weekly
+  skip: []
+  submodules: false
+
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v5.0.0
+    hooks:
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+      - id: check-yaml
+      - id: check-added-large-files
+      - id: check-json
+      - id: check-toml
+      - id: check-xml
+      - id: check-merge-conflict
+      - id: check-case-conflict
+      - id: check-executables-have-shebangs
+      - id: check-shebang-scripts-are-executable
+      - id: check-vcs-permalinks
+      - id: destroyed-symlinks
+      - id: detect-private-key
+      - id: fix-byte-order-marker
+
+  - repo: local
+    hooks:
+      # Mirror CI: fmt check
+      - id: cargo-fmt
+        name: cargo fmt check
+        entry: cargo fmt --all -- --check
+        language: system
+        types: [rust]
+        pass_filenames: false
+        always_run: true
+
+      # Mirror CI: clippy
+      - id: cargo-clippy
+        name: cargo clippy
+        entry: cargo clippy --workspace --all-targets -- -D warnings
+        language: system
+        types: [rust]
+        pass_filenames: false
+        always_run: true
+
+      # Mirror CI: test
+      - id: cargo-test
+        name: cargo test
+        entry: cargo test --workspace --all-targets
+        language: system
+        types: [rust]
+        pass_filenames: false
+        always_run: true
+
+      # Mirror CI: cargo-audit
+      - id: cargo-audit
+        name: cargo audit
+        entry: bash -c 'cargo install cargo-audit --quiet && cargo audit'
+        language: system
+        types: [rust]
+        pass_filenames: false
+        always_run: true
+
+      # Mirror CI: bench-check
+      - id: cargo-bench-check
+        name: cargo build benches
+        entry: cargo build --benches --workspace
+        language: system
+        types: [rust]
+        pass_filenames: false
+        always_run: true
+
+      # uv sync (Python dependency management)
+      - id: uv-sync
+        name: uv sync
+        entry: uv sync
+        language: system
+        files: '^pyproject\.toml$'
+        pass_filenames: false
+        always_run: true
+
+      # Additional quality checks
+      - id: check-todo
+        name: Check TODO items
+        entry: bash -c 'if grep -r "TODO\|FIXME\|XXX" --include="*.rs" --include="*.py" .; then echo "Found TODO/FIXME/XXX items - consider creating issues"; fi'
+        language: system
+        pass_filenames: false
+        always_run: true
+
+      - id: check-docs
+        name: Check documentation
+        entry: bash -c 'find . -name "*.rs" -exec grep -l "//!\|///" {} \; | wc -l | xargs -I {} echo "Found {} documented Rust files"'
+        language: system
+        types: [rust]
+        pass_filenames: false
+        always_run: true

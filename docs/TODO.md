@@ -402,3 +402,12 @@ A Python script can read the loaded DataFrame and run a regression.
 - [-] Windows ARM native — deferred, pyo3 cross-compilation is complex
 - [-] GPU memory management — deferred to post-1.0
 - [-] Multi-process execution (separate Python process per session) — deferred
+
+---
+
+## See Also
+
+- [CONTRIBUTING.md](CONTRIBUTING.md) - Contribution guide
+- [PRE_COMMIT.md](PRE_COMMIT.md) - Code quality setup
+- [SECURITY.md](../SECURITY.md) - Security policy
+- [README.md](../README.md) - Project overview
