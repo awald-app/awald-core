@@ -44,8 +44,8 @@ pub fn slice_frame(frame: &DataFrame, req: SliceRequest) -> Result<Vec<RowData>>
 
     for row_idx in 0..slice.height() {
         let mut cells = Vec::with_capacity(ncols);
-        for col in slice.get_columns() {
-            let val = col.get(row_idx).map_err(Error::Polars)?;
+        for col in slice.columns() {
+            let val: AnyValue = col.get(row_idx).map_err(Error::Polars)?;
             cells.push(anyvalue_to_cell(val));
         }
         rows.push(RowData { index: start + row_idx, cells });
@@ -69,7 +69,10 @@ fn anyvalue_to_cell(v: AnyValue<'_>) -> CellValue {
         AnyValue::Float64(f)             => CellValue::Float(f),
         AnyValue::String(s)              => CellValue::Text(s.to_string()),
         AnyValue::StringOwned(s)         => CellValue::Text(s.to_string()),
-        AnyValue::Categorical(_, rev, _) => CellValue::Text(rev.get(0).to_string()),
+        AnyValue::Categorical(idx, _rev) => {
+            // Convert categorical to string representation
+            CellValue::Text(format!("cat_{}", idx))
+        },
         other                            => CellValue::Text(format!("{other}")),
     }
 }

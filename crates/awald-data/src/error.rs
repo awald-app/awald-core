@@ -13,4 +13,7 @@ pub enum Error {
 
     #[error("Slice out of bounds: requested {start}..{end}, frame has {nrows} rows")]
     SliceOutOfBounds { start: usize, end: usize, nrows: usize },
+
+    #[error("Computation error: {0}")]
+    Compute(String),
 }

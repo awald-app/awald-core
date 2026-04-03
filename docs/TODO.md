@@ -17,32 +17,32 @@ These are `[!]` blocking — the workspace does not compile as-is.
 ### P0 — Compile errors (must fix first)
 
 #### `awald-data`
-- [ ] **Write `crates/awald-data/src/summary.rs`**
-  - [ ] Define `VarSummary` struct
-    - [ ] Fields: `name: String`, `dtype: String`, `nrows: usize`, `null_count: usize`
-    - [ ] Numeric variant: `min`, `max`, `mean`, `std`, `p25`, `p50`, `p75` as `Option<f64>`
-    - [ ] Categorical variant: `top_values: Vec<(String, usize)>` (top 10 value counts)
-  - [ ] Derive `Debug`, `Clone`, `Serialize`, `Deserialize`
-  - [ ] Export from `crates/awald-data/src/lib.rs` — already referenced, file missing
-- [ ] **Fix `tempfile` in `crates/awald-data/Cargo.toml`**
-  - [ ] Move `tempfile = "3"` from direct dep to `{ workspace = true }` pattern
-  - [ ] Add `tempfile = "3"` to `[workspace.dependencies]` in root `Cargo.toml`
+- [x] **Write `crates/awald-data/src/summary.rs`**
+  - [x] Define `VarSummary` struct
+    - [x] Fields: `name: String`, `dtype: String`, `nrows: usize`, `null_count: usize`
+    - [x] Numeric variant: `min`, `max`, `mean`, `std`, `p25`, `p50`, `p75` as `Option<f64>`
+    - [x] Categorical variant: `top_values: Vec<(String, usize)>` (top 10 value counts)
+  - [x] Derive `Debug`, `Clone`, `Serialize`, `Deserialize`
+  - [x] Export from `crates/awald-data/src/lib.rs` — already referenced, file missing
+- [x] **Fix `tempfile` in `crates/awald-data/Cargo.toml`**
+  - [x] Move `tempfile = "3"` from direct dep to `{ workspace = true }` pattern
+  - [x] Add `tempfile = "3"` to `[workspace.dependencies]` in root `Cargo.toml`
 
 #### `awald-engine`
-- [ ] **Fix `pyo3::ffi::c_str!` with runtime `String`**
-  - [ ] `c_str!` macro only accepts string literals — using it with a `String` variable is a compile error
-  - [ ] Replace with `std::ffi::CString::new(script.as_str()).map_err(|_| ...)?`
-  - [ ] Or use `py.run_bound()` / `PyModule::from_code_bound()` from pyo3 0.24 API
-  - [ ] Add `CString` test: verify null bytes in script produce clean error, not panic
-- [ ] **Fix `MutexGuard` sent across `spawn_blocking`**
-  - [ ] `parking_lot::MutexGuard<Py<PyDict>>` is not `Send`
-  - [ ] `tokio::task::spawn_blocking` closure requires `Send + 'static`
-  - [ ] Fix: clone the `Py<PyDict>` before entering `spawn_blocking`, drop guard before move
-  - [ ] Pattern: `let globals_clone = self.globals.lock().clone();` then move `globals_clone`
-  - [ ] Test: verify two concurrent `run()` calls do not deadlock
-- [ ] **Remove unused `Duration` import in `executor.rs`**
-  - [ ] `use std::time::{Duration, Instant}` — `Duration` is never used
-  - [ ] `cargo clippy -- -D warnings` treats unused imports as errors
+- [x] **Fix `pyo3::ffi::c_str!` with runtime `String`**
+  - [x] `c_str!` macro only accepts string literals — using it with a `String` variable is a compile error
+  - [x] Replace with `std::ffi::CString::new(script.as_str()).map_err(|_| ...)?`
+  - [x] Or use `py.run_bound()` / `PyModule::from_code_bound()` from pyo3 0.24 API
+  - [x] Add `CString` test: verify null bytes in script produce clean error, not panic
+- [x] **Fix `MutexGuard` sent across `spawn_blocking`**
+  - [x] `parking_lot::MutexGuard<Py<PyDict>>` is not `Send`
+  - [x] `tokio::task::spawn_blocking` closure requires `Send + 'static`
+  - [x] Fix: clone the `Py<PyDict>` before entering `spawn_blocking`, drop guard before move
+  - [x] Pattern: `let globals_clone = self.globals.lock().clone();` then move `globals_clone`
+  - [x] Test: verify two concurrent `run()` calls do not deadlock
+- [x] **Remove unused `Duration` import in `executor.rs`**
+  - [x] `use std::time::{Duration, Instant}` — `Duration` is never used
+  - [x] `cargo clippy -- -D warnings` treats unused imports as errors
 
 #### `awald-session` / tests
 - [ ] **Wire integration tests to Cargo**

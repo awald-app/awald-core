@@ -1,9 +1,11 @@
-use std::time::{Duration, Instant};
+use std::time::Instant;
+use std::ffi::CString;
 
 use parking_lot::Mutex;
 use pyo3::prelude::*;
 use pyo3::types::PyDict;
 use serde::{Deserialize, Serialize};
+use tokio::sync::Mutex as AsyncMutex;
 
 use crate::{Error, Result, capture};
 
@@ -27,7 +29,7 @@ pub struct ExecutionResult {
 /// a Stata `.do` file maintains state across commands.
 pub struct Executor {
     /// Serialises all Python calls. One execution at a time — no exceptions.
-    _lock:    Mutex<()>,
+    _lock:    AsyncMutex<()>,
     /// Persistent Python globals. Wrapped in Mutex so `run` takes &self.
     globals:  Mutex<Py<PyDict>>,
 }
@@ -43,7 +45,7 @@ impl Executor {
         })?;
 
         Ok(Self {
-            _lock:   Mutex::new(()),
+            _lock:   AsyncMutex::new(()),
             globals: Mutex::new(globals),
         })
     }
@@ -51,20 +53,26 @@ impl Executor {
     /// Execute a Python script string. Captures stdout/stderr.
     /// Returns `ExecutionResult` whether or not the script raised an exception.
     pub async fn run(&self, script: &str) -> Result<ExecutionResult> {
+        // Serialize all Python calls - one execution at a time
+        let _guard = self._lock.lock().await;
+        
         let script = script.to_owned();
-        let globals_ref = self.globals.lock();
+        let globals_clone = Python::with_gil(|py| {
+            self.globals.lock().clone_ref(py)
+        });
 
-        tokio::task::spawn_blocking(move || {
+        let result = tokio::task::spawn_blocking(move || {
             Python::with_gil(|py| {
                 // Re-bind globals into this GIL context
-                let globals = globals_ref.bind(py);
+                let globals = globals_clone.bind(py);
 
                 // Install stdout/stderr capture
                 let (stdout_cap, stderr_cap) = capture::install(py)?;
 
                 let start = Instant::now();
+                let script_cstr = CString::new(script.as_str()).map_err(|_| Error::InvalidScript("Script contains null bytes".to_string()))?;
                 let error = py
-                    .run(pyo3::ffi::c_str!(script), Some(globals), None)
+                    .run(&script_cstr, Some(globals), None)
                     .err()
                     .map(|e| e.to_string());
                 let duration_ms = start.elapsed().as_millis() as u64;
@@ -77,7 +85,10 @@ impl Executor {
             })
         })
         .await
-        .map_err(|e| Error::TaskPanic(e.to_string()))?
+        .map_err(|e| Error::TaskPanic(e.to_string()))?;
+        
+        // _guard is dropped here, releasing the lock
+        result
     }
 
     /// Reset the namespace — equivalent to restarting the session.
@@ -87,7 +98,7 @@ impl Executor {
             let d = PyDict::new(py);
             d.set_item("__builtins__", py.import("builtins")?)?;
             *globals = d.unbind();
-            Ok(())
+            Ok::<_, crate::Error>(())
         })?;
         Ok(())
     }

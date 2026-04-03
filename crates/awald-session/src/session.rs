@@ -4,7 +4,7 @@ use std::path::Path;
 use awald_data::{DataStore, DatasetMeta};
 use awald_engine::{ExecutionResult, Executor};
 
-use crate::{Error, Result};
+use crate::Result;
 
 /// A single user session: one loaded dataset + one Python executor.
 pub struct Session {

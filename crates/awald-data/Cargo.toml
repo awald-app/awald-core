@@ -23,4 +23,9 @@ tracing     = { workspace = true }
 [dev-dependencies]
 insta       = { workspace = true }
 tokio       = { workspace = true, features = ["test-util"] }
-tempfile    = "3"
+tempfile    = { workspace = true }
+criterion    = { workspace = true }
+
+[[bench]]
+name    = "slice_bench"
+harness = false

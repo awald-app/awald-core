@@ -7,4 +7,7 @@ pub enum Error {
 
     #[error("Executor task panicked: {0}")]
     TaskPanic(String),
+
+    #[error("Invalid script: {0}")]
+    InvalidScript(String),
 }

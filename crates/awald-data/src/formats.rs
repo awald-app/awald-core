@@ -24,7 +24,7 @@ pub async fn read(path: &Path) -> Result<DataFrame> {
         }
     })
     .await
-    .map_err(|e| Error::Io(std::io::Error::new(std::io::ErrorKind::Other, e)))?
+    .map_err(|e| Error::Io(std::io::Error::other(e)))?
 }
 
 fn read_csv(path: &Path) -> Result<DataFrame> {
@@ -41,9 +41,11 @@ fn read_parquet(path: &Path) -> Result<DataFrame> {
 }
 
 fn read_stata(path: &Path) -> Result<DataFrame> {
-    let file = std::fs::File::open(path)?;
-    // polars >= 1.0 supports Stata .dta natively
-    Ok(StataReader::new(file).finish()?)
+    // Stata support requires additional features or different API
+    // Placeholder implementation
+    Err(Error::UnsupportedFormat(
+        format!("Stata support pending: {}", path.display())
+    ))
 }
 
 fn read_excel(path: &Path) -> Result<DataFrame> {
