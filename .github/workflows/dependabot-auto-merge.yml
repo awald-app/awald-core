@@ -1,0 +1,27 @@
+name: Dependabot Auto-merge
+
+on:
+  pull_request:
+    types: [opened, synchronize]
+
+jobs:
+  dependabot:
+    runs-on: ubuntu-latest
+    if: ${{ github.actor == 'dependabot[bot]' }}
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          
+      - name: Auto-merge Dependabot PRs
+        run: |
+          # Only auto-merge patch updates and security updates
+          if [[ "${{ github.event.pull_request.title }}" == *"build(deps)"* ]] || [[ "${{ github.event.pull_request.title }}" == *"fix(deps)"* ]]; then
+            if [[ "${{ github.event.pull_request.title }}" == *"security"* ]] || [[ "${{ github.event.pull_request.title }}" == *"patch"* ]]; then
+              gh pr merge --auto --merge --delete-branch "${{ github.event.pull_request.number }}"
+            fi
+          fi
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

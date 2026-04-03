@@ -1,0 +1,64 @@
+version: 2
+registries:
+  github-packages:
+    type: registry
+    url: https://npm.pkg.github.com
+    token: ${{secrets.GITHUB_TOKEN}}
+
+updates:
+  # Enable version updates for npm
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "daily"
+    open-pull-requests-limit: 10
+    reviewers:
+      - "awald-app/maintainers"
+    assignees:
+      - "awald-app/maintainers"
+    commit-message:
+      prefix: "deps"
+      include: "scope"
+
+  # Enable version updates for Docker
+  - package-ecosystem: "docker"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 5
+
+  # Enable version updates for GitHub Actions
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 5
+
+  # Enable version updates for Rust/Cargo
+  - package-ecosystem: "cargo"
+    directory: "/"
+    schedule:
+      interval: "daily"
+    open-pull-requests-limit: 10
+    reviewers:
+      - "awald-app/maintainers"
+    assignees:
+      - "awald-app/maintainers"
+    commit-message:
+      prefix: "deps"
+      include: "scope"
+    # Allow patch updates automatically
+    allow:
+      - dependency-type: "direct"
+      - dependency-type: "indirect"
+    # Group updates for easier review
+    groups:
+      rust-security:
+        dependency-type: "direct"
+        update-types: ["security"]
+      rust-minor:
+        dependency-type: "direct"
+        update-types: ["minor", "patch"]
+      rust-patch:
+        dependency-type: "direct"
+        update-types: ["patch"]
