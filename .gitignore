@@ -1,11 +1,74 @@
-target/
+# Rust
+/target/
 Cargo.lock
 **/*.rs.bk
 *.pdb
+
+# Python
 .env
 .env.*
 !.env.example
-.DS_Store
 .venv/
 *.pyc
 __pycache__/
+*.pyo
+*.pyd
+.Python
+pip-log.txt
+pip-delete-this-directory.txt
+.tox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.log
+.git/
+.mypy_cache/
+.pytest_cache/
+.hypothesis/
+
+# IDE
+.vscode/
+.idea/
+.windsurf/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Workspace specific
+*.tar.gz
+*.zip
+fixtures/
+temp/
+tmp/
+
+# Documentation build
+docs/build/
+book/
+
+# Benchmark results
+bench/results/
+*.bench
+
+# Profiling
+*.prof
+*.pprof
+callgrind.out.*
+massif.out.*
+
+# Local development
+local/
+dev/
+.env.local
+.env.dev
