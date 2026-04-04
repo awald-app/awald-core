@@ -1,39 +1,11 @@
 version: 2
 registries:
   github-packages:
-    type: registry
+    type: npm-registry
     url: https://npm.pkg.github.com
     token: ${{secrets.GITHUB_TOKEN}}
 
 updates:
-  # Enable version updates for npm
-  - package-ecosystem: "npm"
-    directory: "/"
-    schedule:
-      interval: "daily"
-    open-pull-requests-limit: 10
-    reviewers:
-      - "awald-app/maintainers"
-    assignees:
-      - "awald-app/maintainers"
-    commit-message:
-      prefix: "deps"
-      include: "scope"
-
-  # Enable version updates for Docker
-  - package-ecosystem: "docker"
-    directory: "/"
-    schedule:
-      interval: "weekly"
-    open-pull-requests-limit: 5
-
-  # Enable version updates for GitHub Actions
-  - package-ecosystem: "github-actions"
-    directory: "/"
-    schedule:
-      interval: "weekly"
-    open-pull-requests-limit: 5
-
   # Enable version updates for Rust/Cargo
   - package-ecosystem: "cargo"
     directory: "/"
@@ -49,16 +21,67 @@ updates:
       include: "scope"
     # Allow patch updates automatically
     allow:
-      - dependency-type: "direct"
-      - dependency-type: "indirect"
+      - dependency-type: "production"
+      - dependency-type: "development"
     # Group updates for easier review
     groups:
       rust-security:
-        dependency-type: "direct"
-        update-types: ["security"]
+        dependency-type: "production"
+        update-types: ["major", "minor", "patch"]
+        patterns:
+          - "*"
       rust-minor:
-        dependency-type: "direct"
+        dependency-type: "production"
         update-types: ["minor", "patch"]
+        patterns:
+          - "*"
       rust-patch:
-        dependency-type: "direct"
+        dependency-type: "production"
         update-types: ["patch"]
+        patterns:
+          - "*"
+
+  # Enable version updates for GitHub Actions
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 5
+    reviewers:
+      - "awald-app/maintainers"
+    assignees:
+      - "awald-app/maintainers"
+    commit-message:
+      prefix: "ci"
+      include: "scope"
+
+  # Enable version updates for Docker
+  - package-ecosystem: "docker"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 5
+    reviewers:
+      - "awald-app/maintainers"
+    assignees:
+      - "awald-app/maintainers"
+    commit-message:
+      prefix: "docker"
+      include: "scope"
+
+  # Enable version updates for Python (uv/pip)
+  - package-ecosystem: "pip"
+    directory: "/"
+    schedule:
+      interval: "daily"
+    open-pull-requests-limit: 10
+    reviewers:
+      - "awald-app/maintainers"
+    assignees:
+      - "awald-app/maintainers"
+    commit-message:
+      prefix: "deps"
+      include: "scope"
+    allow:
+      - dependency-type: "production"
+      - dependency-type: "development"
