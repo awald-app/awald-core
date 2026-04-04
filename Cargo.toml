@@ -16,7 +16,7 @@ homepage     = "https://awald.app"
 polars        = { version = "0", features = ["csv", "parquet", "ipc", "lazy", "dtype-full"] }
 
 # Python bridge
-pyo3          = { version = "0.23", features = ["auto-initialize"] }
+pyo3          = { version = "0.24", features = ["auto-initialize"] }
 
 # Async runtime
 tokio         = { version = "1", features = ["full"] }

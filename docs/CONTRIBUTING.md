@@ -17,7 +17,7 @@ Thank you for your interest in contributing to awald-core! This guide will help 
 ### Prerequisites
 
 - **Rust**: Latest stable version
-- **Python**: 3.11+ 
+- **Python**: 3.11+
 - **uv**: Modern Python package manager
 - **Git**: For version control
 
@@ -162,10 +162,10 @@ mod tests {
     fn test_functionality() {
         // Arrange
         let input = create_test_input();
-        
+
         // Act
         let result = function_under_test(input);
-        
+
         // Assert
         assert_eq!(result.expected_value, actual_value);
     }

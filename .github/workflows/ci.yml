@@ -9,7 +9,7 @@ on:
 env:
   CARGO_TERM_COLOR: always
   RUST_BACKTRACE:   1
-  PYO3_PYTHON_VERSION: 3.12
+  PYO3_PYTHON_VERSION: 3.13
 
 jobs:
   test:
@@ -34,15 +34,15 @@ jobs:
       - name: Install uv
         uses: astral-sh/setup-uv@v4
 
-      - name: Set up Python 3.12
-        run: uv python install 3.12
+      - name: Set up Python 3.13
+        run: uv python install 3.13
 
       - name: Install Python deps (pyfixest, polars, statsmodels)
         run: uv sync
 
       - name: Set Python version for PyO3
         run: |
-          echo "PYO3_PYTHON_VERSION=3.12" >> $GITHUB_ENV
+          echo "PYO3_PYTHON_VERSION=3.13" >> $GITHUB_ENV
           echo "PYTHONPATH=$(uv python path)" >> $GITHUB_ENV
 
       - name: fmt check
