@@ -1,0 +1,9 @@
+# Cargo Audit Ignore List
+# Add one advisory ID per line to ignore it
+# Comments (lines starting with #) are ignored
+
+# Unmaintained dependencies (transitive, not directly controlled)
+RUSTSEC-2025-0141  # bincode is unmaintained (transitive from polars)
+
+# Add future advisories here:
+# RUSTSEC-2025-XXXX  # Description of why this is ignored

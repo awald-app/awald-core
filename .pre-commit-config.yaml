@@ -91,8 +91,8 @@ repos:
       # Mirror CI: cargo-audit
       - id: cargo-audit
         name: cargo audit
-        entry: bash -c 'cargo install cargo-audit --quiet && cargo audit'
-        language: system
+        entry: ./scripts/cargo-audit.sh
+        language: script
         types: [rust]
         pass_filenames: false
         always_run: true

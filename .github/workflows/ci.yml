@@ -10,6 +10,7 @@ env:
   CARGO_TERM_COLOR: always
   RUST_BACKTRACE:   1
   PYO3_PYTHON_VERSION: 3.13
+  PYO3_USE_ABI3_FORWARD_COMPATIBILITY: 1
 
 jobs:
   test:
@@ -43,7 +44,12 @@ jobs:
       - name: Set Python version for PyO3
         run: |
           echo "PYO3_PYTHON_VERSION=3.13" >> $GITHUB_ENV
-          echo "PYTHONPATH=$(uv python path)" >> $GITHUB_ENV
+          if [ "$RUNNER_OS" == "Windows" ]; then
+            echo "PYTHONPATH=$(uv python pin 3.13)" >> $GITHUB_ENV
+          else
+            echo "PYTHONPATH=$(uv python path)" >> $GITHUB_ENV
+          fi
+        shell: bash
 
       - name: fmt check
         run: cargo fmt --all -- --check
@@ -55,9 +61,7 @@ jobs:
         run: cargo test --workspace --all-targets
 
       - name: cargo-audit
-        run: |
-          cargo install cargo-audit --quiet
-          cargo audit
+        run: ./scripts/cargo-audit.sh
 
   bench-check:
     name: Benchmarks compile check

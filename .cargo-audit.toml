@@ -1,0 +1,18 @@
+# Cargo Audit Configuration
+# This file allows fine-grained control over which advisories to ignore
+
+# Ignore unmaintained crates (transitive dependencies we can't control)
+[ignore]
+unmaintained = true
+
+# You can add specific advisories here when needed:
+# id = "RUSTSEC-2025-0141"  # bincode unmaintained
+# id = "RUSTSEC-2025-0020"  # PyO3 buffer overflow (example)
+
+# You can also ignore by crate:
+# crate = "bincode"
+# crate = "old-crate"
+
+# You can ignore by severity:
+# severity = "low"
+# severity = "medium"
