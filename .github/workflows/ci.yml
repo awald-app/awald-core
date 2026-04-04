@@ -9,6 +9,7 @@ on:
 env:
   CARGO_TERM_COLOR: always
   RUST_BACKTRACE:   1
+  PYO3_PYTHON_VERSION: 3.12
 
 jobs:
   test:
@@ -38,6 +39,11 @@ jobs:
 
       - name: Install Python deps (pyfixest, polars, statsmodels)
         run: uv sync
+
+      - name: Set Python version for PyO3
+        run: |
+          echo "PYO3_PYTHON_VERSION=3.12" >> $GITHUB_ENV
+          echo "PYTHONPATH=$(uv python path)" >> $GITHUB_ENV
 
       - name: fmt check
         run: cargo fmt --all -- --check
